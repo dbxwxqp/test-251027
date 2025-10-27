@@ -1,0 +1,95 @@
+<style>
+*{
+    box-sizing: border-box;
+}
+
+table{
+    font-family: monospace;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+td{
+    border: 1px solid grey;
+    padding: 10px 20px;
+}
+
+label{
+    font-size: .9em;
+    font-weight: bold;
+}
+</style>
+
+
+<table>
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>title</th>
+            <th>status</th>
+            <th>amount</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<label for="filter">filter:</label>
+<select id="filter">
+    <option>ALL</option>
+</select>
+
+
+<script>
+const tbody = document.querySelector('tbody')
+const select = document.getElementById('filter')
+
+const fillTable = (status = 'ALL') => {
+    tbody.innerHTML = ''
+    fetch('./mock_deals.json')
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.length > 0) {
+                const oFilterItems = {}
+
+                const filteredData = (status === 'ALL') ? data : data.filter(row => row.status === status)
+
+                filteredData.forEach((row) => {
+                    const tr = document.createElement('tr')
+
+                    const td_id = document.createElement('td')
+                    td_id.textContent = row.id
+                    tr.append(td_id)
+
+                    const td_title = document.createElement('td')
+                    td_title.textContent = row.title
+                    tr.append(td_title)
+
+                    const td_status = document.createElement('td')
+                    td_status.textContent = row.status
+                    tr.append(td_status)
+
+                    const td_amount = document.createElement('td')
+                    td_amount.textContent = row.amount
+                    tr.append(td_amount)
+
+                    tbody.append(tr)
+
+                    //< filter
+                    oFilterItems[row.status] = !oFilterItems[row.status] ? 1 : ++oFilterItems[row.status]
+                })
+
+                if(select.children.length < 2) {
+                    for (let key in oFilterItems) {
+                        const option = document.createElement('option')
+                        option.value = option.textContent = key
+                        select.append(option)
+                    }
+                }
+                //> filter
+            }
+        })
+        .catch((error) => console.error(error))
+}
+fillTable()
+select.addEventListener('change', () => fillTable(select.value))
+</script>
