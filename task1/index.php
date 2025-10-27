@@ -1,7 +1,3 @@
-<?php
-
-?>
-
     <h2>Прочитать файл mock_data.json (он находится в этой же папке).</h2>
 <?php
 $file_path = __DIR__ . '/mock_data.json';
